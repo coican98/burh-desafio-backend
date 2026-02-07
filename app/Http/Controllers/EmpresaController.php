@@ -31,7 +31,7 @@ class EmpresaController extends Controller
         $validarCNPJ = $this->validarCNPJ($cnpj);
 
         if ($validarCNPJ->getStatusCode() != 200) {
-            return response()->json(['message' => $validarCNPJ->json('message')], $validarCNPJ->getStatusCode());
+            return $validarCNPJ;
         }
 
         $empresa = Empresa::create([
@@ -81,7 +81,7 @@ class EmpresaController extends Controller
         $validarCNPJ = $this->validarCNPJ($cnpj);
 
         if ($validarCNPJ->getStatusCode() != 200) {
-            return response()->json(['message' => $validarCNPJ->json('message')], $validarCNPJ->getStatusCode());
+            return $validarCNPJ;
         }
 
         $empresa->update([
@@ -115,29 +115,55 @@ class EmpresaController extends Controller
 
     function validarCNPJ($cnpj)
     {
-        $cnpj = preg_replace(['/\D/', '/\./', '/\-/'], '', $cnpj);
+        // 1. Limpeza: Remover caracteres especiais
+        $cnpj = strtoupper(preg_replace('/[^A-Z0-9]/', '', $cnpj));
 
+        // 2. Regra de Ouro: CNPJs com todos os caracteres iguais são inválidos
+        if (preg_match('/^(.)\1{13}$/', $cnpj)) {
+            return response()->json(['message' => 'O CNPJ informado é inválido (caracteres repetidos).'], 400);
+        }
+
+        // 3. Estrutura: 14 caracteres totais
         if (strlen($cnpj) != 14) {
-            return response()->json(['message' => 'O CNPJ informado não possui 14 dígitos.'], 400);
+            return response()->json(['message' => 'O CNPJ informado não possui 14 caracteres.'], 400);
         }
 
-        for ($i = 0; $i < 2; $i++) {
-            $soma = 0;
-            $multiplicador = 5 - $i;
-            for ($j = 0; $j < 12 + $i; $j++) {
-                $soma += $cnpj[$j] * $multiplicador;
-                $multiplicador--;
-            }
-            $resto = $soma % 11;
-            if ($resto < 2) {
-                $resto = 0;
-            } else {
-                $resto = 11 - $resto;
-            }
-            if ($resto != $cnpj[12 + $i]) {
-                return response()->json(['message' => 'O CNPJ informado não é válido.'], 400);
-            }
+        // Conversão Alphanumérica (ASCII - 48)
+        $valores = [];
+        for ($i = 0; $i < 14; $i++) {
+            $char = $cnpj[$i];
+            $valores[] = is_numeric($char) ? (int)$char : ord($char) - 48;
         }
+
+        // Pesos de Cálculo
+        $pesos1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+        $pesos2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+
+        // 1º Dígito Verificador (DV)
+        $soma1 = 0;
+        for ($i = 0; $i < 12; $i++) {
+            $soma1 += $valores[$i] * $pesos1[$i];
+        }
+        $resto1 = $soma1 % 11;
+        $dv1 = ($resto1 < 2) ? 0 : 11 - $resto1;
+
+        if ($valores[12] !== $dv1) {
+            return response()->json(['message' => 'O CNPJ informado não é válido (1º dígito verificador).'], 400);
+        }
+
+        // 2º Dígito Verificador (DV)
+        $soma2 = 0;
+        for ($i = 0; $i < 12; $i++) {
+            $soma2 += $valores[$i] * $pesos2[$i];
+        }
+        $soma2 += $dv1 * $pesos2[12];
+        $resto2 = $soma2 % 11;
+        $dv2 = ($resto2 < 2) ? 0 : 11 - $resto2;
+
+        if ($valores[13] !== $dv2) {
+            return response()->json(['message' => 'O CNPJ informado não é válido (2º dígito verificador).'], 400);
+        }
+
         return response()->json(['message' => 'O CNPJ informado é válido.'], 200);
     }
 }
