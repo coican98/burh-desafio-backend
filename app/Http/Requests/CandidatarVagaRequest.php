@@ -41,7 +41,7 @@ class CandidatarVagaRequest extends FormRequest
             if ($this->usuario_id && $this->vaga_id) {
                 $usuario = Usuario::with('vagas')->find($this->usuario_id);
                 if ($usuario && $usuario->vagas->contains($this->vaga_id)) {
-                    $validator->errors()->add('vaga_id', 'O usuário já se candidatou a esta vaga.');
+                    $validator->errors()->add('vaga_id', 'O usuário já se candidatou a esta vaga!');
                 }
             }
         });

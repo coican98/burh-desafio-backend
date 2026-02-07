@@ -44,7 +44,7 @@ class StoreVagaRequest extends FormRequest
                 'integer', // horas por dia
                 function ($attribute, $value, $fail) {
                     if (in_array($this->tipo, ['ESTAGIO', 'Estágio']) && $value > 6) {
-                        $fail('A carga horária para estágio não pode exceder 6 horas.');
+                        $fail('A carga horária para estágio não pode exceder 6 horas diárias.');
                     }
                 },
             ],
@@ -66,7 +66,7 @@ class StoreVagaRequest extends FormRequest
                     $vagasCount = $empresa->vagas()->count();
                     
                     if ($empresa->plano === 'Free' && $vagasCount >= 5) {
-                        $validator->errors()->add('empresa_id', 'Empresas com plano Free podem abrir no máximo 5 vagas.');
+                        $validator->errors()->add('empresa_id', 'Empresas com plano gratuito podem abrir no máximo 5 vagas.');
                     }
                     
                     if ($empresa->plano === 'Premium' && $vagasCount >= 10) {
