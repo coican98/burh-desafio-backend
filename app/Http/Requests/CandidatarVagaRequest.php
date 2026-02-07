@@ -5,6 +5,8 @@ namespace App\Http\Requests;
 use App\Models\Usuario;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class CandidatarVagaRequest extends FormRequest
 {
@@ -50,8 +52,31 @@ class CandidatarVagaRequest extends FormRequest
     public function messages()
     {
         return [
+            'usuario_id.required' => 'O campo usuário é obrigatório.',
             'usuario_id.exists' => 'Usuário não encontrado.',
+            'vaga_id.required' => 'O campo vaga é obrigatório.',
             'vaga_id.exists' => 'Vaga não encontrada.',
         ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [
+            'usuario_id' => 'usuário',
+            'vaga_id' => 'vaga',
+        ];
+    }
+
+    protected function failedValidation(ValidatorContract $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'message' => 'Erro de validação.',
+            'errors' => $validator->errors(),
+        ], 422));
     }
 }

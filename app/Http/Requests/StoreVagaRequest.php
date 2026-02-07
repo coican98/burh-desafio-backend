@@ -5,6 +5,8 @@ namespace App\Http\Requests;
 use App\Models\Empresa;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreVagaRequest extends FormRequest
 {
@@ -85,8 +87,40 @@ class StoreVagaRequest extends FormRequest
     public function messages()
     {
         return [
-            'tipo.in' => 'O tipo de vaga deve ser CLT, PJ ou Estágio.',
+            'empresa_id.required' => 'O campo empresa é obrigatório.',
             'empresa_id.exists' => 'A empresa informada não existe.',
+            'titulo.required' => 'O campo título é obrigatório.',
+            'descricao.required' => 'O campo descrição é obrigatório.',
+            'tipo.required' => 'O campo tipo é obrigatório.',
+            'tipo.in' => 'O tipo de vaga deve ser CLT, PJ ou Estágio.',
+            'salario.required_if' => 'O campo salário é obrigatório quando o tipo é :value.',
+            'salario.numeric' => 'O campo salário deve ser um número.',
+            'horario.required_if' => 'O campo horário é obrigatório quando o tipo é :value.',
+            'horario.integer' => 'O campo horário deve ser um número inteiro.',
         ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [
+            'empresa_id' => 'empresa',
+            'titulo' => 'título',
+            'descricao' => 'descrição',
+            'salario' => 'salário',
+            'horario' => 'horário',
+        ];
+    }
+
+    protected function failedValidation(ValidatorContract $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'message' => 'Erro de validação.',
+            'errors' => $validator->errors(),
+        ], 422));
     }
 }

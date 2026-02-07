@@ -25,6 +25,17 @@ class EmpresaController extends Controller
             'descricao' => 'required|string',
             'cnpj' => 'required|string|unique:empresas,cnpj',
             'plano' => 'required|in:Free,Premium',
+        ], [
+            'required' => 'O campo :attribute é obrigatório.',
+            'string' => 'O campo :attribute deve ser uma string.',
+            'max' => 'O campo :attribute não pode ter mais que :max caracteres.',
+            'unique' => 'O :attribute informado já está em uso.',
+            'in' => 'O :attribute selecionado é inválido.',
+        ], [
+            'nome' => 'nome',
+            'descricao' => 'descrição',
+            'cnpj' => 'CNPJ',
+            'plano' => 'plano',
         ]);
 
         $cnpj = preg_replace(['/\D/', '/\./', '/\-/'], '', $request->cnpj);
@@ -75,6 +86,13 @@ class EmpresaController extends Controller
         $request->validate([
             'cnpj' => 'string|unique:empresas,cnpj,' . $id,
             'plano' => 'in:Free,Premium',
+        ], [
+            'string' => 'O campo :attribute deve ser uma string.',
+            'unique' => 'O :attribute informado já está em uso.',
+            'in' => 'O :attribute selecionado é inválido.',
+        ], [
+            'cnpj' => 'CNPJ',
+            'plano' => 'plano',
         ]);
 
         $cnpj = preg_replace(['/\D/', '/\./', '/\-/'], '', $request->cnpj);
