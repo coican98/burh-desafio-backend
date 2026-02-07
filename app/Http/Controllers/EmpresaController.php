@@ -115,15 +115,10 @@ class EmpresaController extends Controller
 
     function validarCNPJ($cnpj)
     {
-        // 1. Limpeza: Remover caracteres especiais
         $cnpj = strtoupper(preg_replace('/[^A-Z0-9]/', '', $cnpj));
-
-        // 2. Regra de Ouro: CNPJs com todos os caracteres iguais são inválidos
         if (preg_match('/^(.)\1{13}$/', $cnpj)) {
             return response()->json(['message' => 'O CNPJ informado é inválido (caracteres repetidos).'], 400);
         }
-
-        // 3. Estrutura: 14 caracteres totais
         if (strlen($cnpj) != 14) {
             return response()->json(['message' => 'O CNPJ informado não possui 14 caracteres.'], 400);
         }
