@@ -36,7 +36,7 @@ services:
       POSTGRES_USER: burh_user
       POSTGRES_PASSWORD: burh_password
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
