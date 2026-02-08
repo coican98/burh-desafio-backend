@@ -77,14 +77,8 @@ class EmpresaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $empresa = Empresa::find($id);
-
-        if (!$empresa) {
-            return response()->json(['message' => 'Empresa não encontrada'], 404);
-        }
-
         $request->validate([
-            'cnpj' => 'string|unique:empresas,cnpj,' . $id,
+            'cnpj' => 'string|unique:empresas,cnpj,',
             'plano' => 'in:Free,Premium',
         ], [
             'string' => 'O campo :attribute deve ser uma string.',
@@ -94,20 +88,37 @@ class EmpresaController extends Controller
             'cnpj' => 'CNPJ',
             'plano' => 'plano',
         ]);
+        $empresa = Empresa::find($id);
+        if (!$empresa) {
+            return response()->json(['message' => 'Empresa não encontrada'], 404);
+        }
+        $update = [
+            "nome" => $empresa->nome,
+            "descricao" => $empresa->descricao,
+            "cnpj" => $empresa->cnpj,
+            "plano" => $empresa->plano,
+        ];
 
-        $cnpj = preg_replace(['/\D/', '/\./', '/\-/'], '', $request->cnpj);
-        $validarCNPJ = $this->validarCNPJ($cnpj);
-
-        if ($validarCNPJ->getStatusCode() != 200) {
-            return $validarCNPJ;
+        if($request->cnpj){
+            $cnpj = preg_replace(['/\D/', '/\./', '/\-/'], '', $request->cnpj);
+            $validarCNPJ = $this->validarCNPJ($cnpj);
+            if ($validarCNPJ->getStatusCode() != 200) {
+                return $validarCNPJ;
+            }
+            $update['cnpj'] = $cnpj;
         }
 
-        $empresa->update([
-            'nome' => $request->nome,
-            'descricao' => $request->descricao,
-            'cnpj' => $cnpj,
-            'plano' => $request->plano,
-        ]);
+        if($request->plano){
+            $update['plano'] = $request->plano;
+        }
+        if($request->descricao){
+            $update['descricao'] = $request->descricao;
+        }
+        if($request->nome){
+            $update['nome'] = $request->nome;
+        }
+
+        $empresa->update($update);
 
         return response()->json([
             'message' => 'Empresa atualizada com sucesso.',

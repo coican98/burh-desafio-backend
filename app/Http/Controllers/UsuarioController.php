@@ -65,12 +65,6 @@ class UsuarioController extends Controller
 
     public function update(Request $request, $id)
     {
-        $usuario = Usuario::find($id);
-
-        if (!$usuario) {
-            return response()->json(['message' => 'Usuário não encontrado'], 404);
-        }
-
         $request->validate([
             'email' => 'email|unique:usuarios,email,' . $id,
             'cpf' => 'string|unique:usuarios,cpf,' . $id,
@@ -82,8 +76,33 @@ class UsuarioController extends Controller
             'email' => 'e-mail',
             'cpf' => 'CPF',
         ]);
+        $usuario = Usuario::find($id);
 
-        $usuario->update($request->all());
+        if (!$usuario) {
+            return response()->json(['message' => 'Usuário não encontrado'], 404);
+        }
+
+        $update = [
+            "nome" => $usuario->nome,
+            "email" => $usuario->email,
+            "cpf" => $usuario->cpf,
+            "idade" => $usuario->idade,
+        ];
+
+        if($request->email){
+            $update['email'] = $request->email;
+        }
+        if($request->cpf){
+            $update['cpf'] = $request->cpf;
+        }
+        if($request->idade){
+            $update['idade'] = $request->idade;
+        }
+        if($request->nome){
+            $update['nome'] = $request->nome;
+        }
+
+        $usuario->update($update);
 
         return response()->json([
             'message' => 'Usuário atualizado com sucesso.',

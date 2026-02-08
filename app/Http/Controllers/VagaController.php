@@ -51,7 +51,37 @@ class VagaController extends Controller
         if (!$vaga) {
             return response()->json(['message' => 'Vaga não encontrada'], 404);
         }
-        $vaga->update($request->all());
+        $update = [
+            "empresa_id" => $vaga->empresa_id,
+            "titulo" => $vaga->titulo,
+            "descricao" => $vaga->descricao,
+            "tipo" => $vaga->tipo,
+            "salario" => $vaga->salario,
+            "horario" => $vaga->horario,
+            "status" => $vaga->status,
+        ];
+        if($request->empresa_id){
+            $update['empresa_id'] = $request->empresa_id;
+        }
+        if($request->titulo){
+            $update['titulo'] = $request->titulo;
+        }
+        if($request->descricao){
+            $update['descricao'] = $request->descricao;
+        }
+        if($request->tipo){
+            $update['tipo'] = $request->tipo;
+        }
+        if($request->salario){
+            $update['salario'] = $request->salario;
+        }
+        if($request->horario){
+            $update['horario'] = $request->horario;
+        }
+        if($request->status){
+            $update['status'] = $request->status;
+        }
+        $vaga->update($update);
         return response()->json(['message' => 'Vaga atualizada com sucesso', 'vaga' => $vaga]);
     }
 
