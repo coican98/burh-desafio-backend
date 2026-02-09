@@ -1,69 +1,52 @@
-# Desafio Backend BURH 
- 
-## Introdução 
-Nesse desafio serão analisadas suas competências no desenvolvimento de uma API de vagas de emprego. O desafio é referente à vaga Desenvolvedor(a) Backend PHP, publicada no [Burh](https://burh.com.br/vagas/3270129695). Abaixo você encontrará todas as informações necessárias para criar e submeter seu desafio.  
+# Burh Desafio Backend
 
-Boa sorte! 🙂 
- 
-## Instruções 
-Para realizar o desafio é importante que você cumpra os itens abaixo: 
-* Possuir um Github; 
-* Realizar o [Fork](https://docs.github.com/pt/get-started/quickstart/fork-a-repo) deste projeto e subir os commits em seu Github; 
-* Estar inscrito na [vaga](https://burh.com.br/vagas/3270129695). 
- 
-## Instruções 
-Para começar a desenvolver, o primeiro passo é criar um fork deste projeto, logo após, recomendamos que você de uma boa olhada nas principais funções e requisitos do desafio antes de começar a programar. Ao subir os commits do seu projeto busque ser o mais descritivo possível, sem subir muitas funcionalidades de uma vez. O desafio busca analisar suas competências em desenvolvimento de APIs, portanto não é necessário e nem será analisado nenhuma tela. Busque terminar primeiro os itens essenciais do desafio e só então, caso queira, você pode implementar funcionalidades adicionais ao seu projeto. 
- 
-A API deve ser criada utilizando PHP com o Framework Laravel. O banco ficará a sua escolha, portanto que seja um banco SQL (MySql, MariaDB, PostgreSQL, Sqlite, etc). 
- 
-## O Projeto 
-Você será responsável pela criação de uma API Restful de cadastro de vagas e candidatura de usuários, em que uma empresa pode criar uma vaga e um usuário pode se candidatar nas vagas criadas.  
-A API deve ser o mais simples possível, contendo somente as funcionalidades que você considere essenciais para a integração completa do seu projeto e atenda aos nossos requisitos.  
-Rotas, estrutura do banco e estrutura do código também estarão ao seu critério, portanto que supram os requisitos. 
-  
-A API deverá conter as seguintes entidades: 
+API RESTful para o desafio técnico da Burh, desenvolvida em Laravel 12.
 
- 
-* Empresa; 
-* Usuário; 
-* Vaga. 
- 
-A entidade empresa deverá conter os campos nome, descrição, CNPJ e plano. 
-A entidade vaga deverá conter os campos título, descrição, tipo de vaga, salário e horário. 
-A entidade usuário deverá conter os campos nome, e-mail, CPF e idade. 
- 
-Requisitos: 
+## Tecnologias
+- Laravel 12 / PHP 8.2
+- PostgreSQL 15 (Docker)
+- Nginx (Docker)
 
- 
-* Empresas podem abrir vagas. 
-* Usuários podem se candidatar a vagas. 
-* Não pode haver mais de um usuário com o mesmo e-mail ou CPF cadastrado. 
-* Não pode haver mais de uma empresa com o mesmo CNPJ cadastrado. 
-* As empresas poderão ter 2 tipos de plano: "Free" ou "Premium". Empresas com o plano Free poderão abrir até 5 vagas, enquanto empresas com o plano Premium podem abrir até 10 vagas. 
-* Poderão existir vagas do tipo PJ, CLT e estágio.  
-* Vagas do tipo CLT e estágio tem o cadastro do salário e horário obrigatórios.  
-* Vagas do tipo CLT devem possuir o salário mínimo de R$1212,00 enquanto vagas de estágio e PJ não possuem um valor mínimo.  
-* Vagas do tipo estágio devem ter o horário máximo de 6 horas. 
-* Deverá haver uma rota de busca de usuários, podendo filtrar por nome, E-mail e CPF. Além disso a rota deverá retornar todas as vagas em que aqueles usuários estão inscritos, trazendo todos os dados dessas vagas. 
- 
-Você é livre para nomear os campos da forma que preferir e adicionar quaisquer campos extras ou tabelas para criar relações entre as entidades. não é necessário qualquer sistema de autenticação. 
- 
-## O que avaliaremos em seu projeto 
-* Cumprimento dos requisitos do desafio. 
-* Estrutura e coerência do código. 
-* Arquitetura do banco. 
-* Código limpo e organizado. 
-* Padrões de código (PSRs, Design patterns, SOLID). 
-* Tratamento de erros. 
- 
-## O que será um diferencial para seu projeto. 
-* Uso de docker. 
-* Testes de integração. 
-* Design Patterns. 
-* Documentação (ReadME). 
+## Funcionalidades
+- **Docker:** Ambiente isolado com Docker Compose.
+- **Banco de Dados:** Postgres configurado na porta `5433` do host para evitar conflitos.
+- **Validação de CNPJ:** Suporte ao novo padrão alfanumérico (Receita Federal 07/2026).
+- **Validação de CPF:** Algoritmo completo com verificação de dois dígitos e bloqueio de repetições.
+- **Tradução:** Mensagens de erro e respostas da API em pt-BR.
+- **Respostas JSON:** Validação de erros retorna 422 (JSON) automaticamente, sem necessidade do header `Accept`.
+- **Filtros:** Busca de usuários por nome, email ou CPF com listagem detalhada de vagas.
 
-* Uso de cache 
- 
-## O que NÃO é essencial em seu projeto 
-* Frontend. 
-* Autenticação. 
+## Setup
+1. Suba os containers:
+   ```bash
+   docker-compose up -d
+   ```
+2. Instale as dependências e rode as migrations:
+   ```bash
+   docker exec -it burh-app composer install
+   docker exec -it burh-app php artisan key:generate
+   docker exec -it burh-app php artisan migrate
+   ```
+
+## API
+- Endpoint base: `http://localhost:8000/api`
+- Postgres (Host): `localhost:5433` | User: `burh_user` | Pass: `burh_password`
+
+---
+
+## Checklist de Requisitos
+- [x] CRUD Empresa (nome, descrição, CNPJ, plano)
+- [x] CRUD Vaga (título, descrição, tipo, salário, horário)
+- [x] CRUD Usuário (nome, e-mail, CPF, idade)
+- [x] Rota de candidatura
+- [x] Validação de e-mail/CPF/CNPJ únicos
+- [x] Limites de vagas por plano (Free: 5, Premium: 10)
+- [x] Salário/horário obrigatórios para CLT e Estágio
+- [x] Salário mínimo CLT (R$ 1.212,00)
+- [x] Horário máximo Estágio (6h)
+- [x] Busca de usuários com filtros e relação de vagas
+- [x] Ambiente Docker
+- [x] Tratamento de erros e pt-BR local
+
+---
+*Instruções originais do desafio movidas para [DESCRICAO.md](DESCRICAO.md).*
