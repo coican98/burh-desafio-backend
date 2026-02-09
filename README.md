@@ -36,16 +36,16 @@ API RESTful para o desafio técnico da Burh, desenvolvida em Laravel 12.
 Abaixo, alguns exemplos das validações customizadas (CPF e Regras de Negócio) funcionando via API:
 
 ### Validação CPF - 1º Dígito
-![Validação CPF - 1º Dígito](file:///C:/Users/nathan.lima/.gemini/antigravity/brain/2f731e90-3d98-4a4d-9d29-4f18a2175cb6/media__1770606212614.png)
+![Validação CPF - 1º Dígito](docs/img/validacao_cpf_1.png)
 
 ### Validação CPF - 2º Dígito
-![Validação CPF - 2º Dígito](file:///C:/Users/nathan.lima/.gemini/antigravity/brain/2f731e90-3d98-4a4d-9d29-4f18a2175cb6/media__1770606237231.png)
+![Validação CPF - 2º Dígito](docs/img/validacao_cpf_2.png)
 
 ### Limite de Vagas - Plano Free
-![Limite de Vagas - Plano Free](file:///C:/Users/nathan.lima/.gemini/antigravity/brain/2f731e90-3d98-4a4d-9d29-4f18a2175cb6/media__1770606237242.png)
+![Limite de Vagas - Plano Free](docs/img/limite_vagas.png)
 
 ### Remoção de Vaga
-![Remoção de Vaga](file:///C:/Users/nathan.lima/.gemini/antigravity/brain/2f731e90-3d98-4a4d-9d29-4f18a2175cb6/media__1770606517708.png)
+![Remoção de Vaga](docs/img/remocao_vaga.png)
 
 ---
 
