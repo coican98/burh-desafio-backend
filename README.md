@@ -32,6 +32,19 @@ API RESTful para o desafio técnico da Burh, desenvolvida em Laravel 12.
 - Endpoint base: `http://localhost:8000/api`
 - Postgres (Host): `localhost:5433` | User: `burh_user` | Pass: `burh_password`
 
+## Testes e Validações
+Abaixo, alguns exemplos das validações customizadas (CPF e Regras de Negócio) funcionando via API:
+
+````carousel
+![Validação CPF - 1º Dígito](file:///C:/Users/nathan.lima/.gemini/antigravity/brain/2f731e90-3d98-4a4d-9d29-4f18a2175cb6/media__1770606212614.png)
+<!-- slide -->
+![Validação CPF - 2º Dígito](file:///C:/Users/nathan.lima/.gemini/antigravity/brain/2f731e90-3d98-4a4d-9d29-4f18a2175cb6/media__1770606237231.png)
+<!-- slide -->
+![Limite de Vagas - Plano Free](file:///C:/Users/nathan.lima/.gemini/antigravity/brain/2f731e90-3d98-4a4d-9d29-4f18a2175cb6/media__1770606237242.png)
+<!-- slide -->
+![Remoção de Vaga](file:///C:/Users/nathan.lima/.gemini/antigravity/brain/2f731e90-3d98-4a4d-9d29-4f18a2175cb6/media__1770606517708.png)
+````
+
 ---
 
 ## Checklist de Requisitos
