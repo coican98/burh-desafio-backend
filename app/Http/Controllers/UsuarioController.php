@@ -43,8 +43,18 @@ class UsuarioController extends Controller
             'cpf' => 'CPF',
             'idade' => 'idade',
         ]);
-
-        $usuario = Usuario::create($request->all());
+        $cpf = preg_replace('/[^0-9]/', '', $request->cpf);
+        $validarCPF = $this->validarCPF($cpf);
+        // dd($validarCPF);
+        if ($validarCPF->getStatusCode() != 200) {
+            return $validarCPF;
+        }
+        $usuario = Usuario::create([
+            'nome' => $request->nome,
+            'email' => $request->email,
+            'cpf' => $cpf,
+            'idade' => $request->idade,
+        ]);
 
         return response()->json([
             'message' => 'Usuário criado com sucesso.',
@@ -82,6 +92,12 @@ class UsuarioController extends Controller
             return response()->json(['message' => 'Usuário não encontrado'], 404);
         }
 
+        $cpf = preg_replace('/[^0-9]/', '', $request->cpf);
+        $validarCPF = $this->validarCPF($cpf);
+        if ($validarCPF->getStatusCode() != 200) {
+            return $validarCPF;
+        }
+
         $update = [
             "nome" => $usuario->nome,
             "email" => $usuario->email,
@@ -93,7 +109,7 @@ class UsuarioController extends Controller
             $update['email'] = $request->email;
         }
         if($request->cpf){
-            $update['cpf'] = $request->cpf;
+            $update['cpf'] = $cpf;
         }
         if($request->idade){
             $update['idade'] = $request->idade;
@@ -121,5 +137,42 @@ class UsuarioController extends Controller
         $usuario->delete();
 
         return response()->json(['message' => 'Usuário removido com sucesso.']);
+    }
+    public function validarCPF($cpf)
+    {
+        $cpf = preg_replace('/[^0-9]/', '', $cpf);
+
+        if (strlen($cpf) != 11) {
+            return response()->json(['message' => 'O CPF informado não possui 11 caracteres.'], 400);
+        }
+
+        if (preg_match('/^(.)\1{10}$/', $cpf)) {
+            return response()->json(['message' => 'O CPF informado é inválido (caracteres repetidos).'], 400);
+        }
+        // 1. Validação do primeiro dígito
+        $soma1 = 0;
+        for ($i = 0; $i < 9; $i++) {
+            $soma1 += $cpf[$i] * (10 - $i);
+        }
+        $resto1 = ($soma1 * 10) % 11;
+        if ($resto1 == 10) $resto1 = 0;
+
+        if ($resto1 != $cpf[9]) {
+            return response()->json(['message' => 'O CPF informado não é válido (1º dígito verificador).'], 400);
+        }
+
+        // 2. Validação do segundo dígito
+        $soma2 = 0;
+        for ($i = 0; $i < 10; $i++) {
+            $soma2 += $cpf[$i] * (11 - $i);
+        }
+        $resto2 = ($soma2 * 10) % 11;
+        if ($resto2 == 10) $resto2 = 0;
+
+        if ($resto2 != $cpf[10]) {
+            return response()->json(['message' => 'O CPF informado não é válido (2º dígito verificador).'], 400);
+        }
+
+        return response()->json(['message' => 'O CPF informado é válido.'], 200);
     }
 }
